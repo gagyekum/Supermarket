@@ -17,7 +17,7 @@ import dotenv
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Python-dotenv
-dotenv.load_dotenv(BASE_DIR + './env', verbose=True)
+dotenv.load_dotenv(dotenv_path=os.path.join(BASE_DIR, '.env'), verbose=True)
 
 
 # Quick-start development settings - unsuitable for production
