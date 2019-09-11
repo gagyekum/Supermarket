@@ -40,4 +40,3 @@ class Item(BaseWithSoftDeleteModel):
 
     def __str__(self):
         return '{}[{}]'.format(self.name, 'Service' if self.is_service else 'Product')
-

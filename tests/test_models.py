@@ -166,7 +166,7 @@ class TestItemModel(object):
 
         expected_item = Item.objects.filter(id=item.id).first()
 
-        assert expected_item.is_deleted == True
+        assert expected_item.is_deleted
         assert expected_item.deleted_at == deleted_at
 
 
