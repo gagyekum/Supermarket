@@ -1,10 +1,9 @@
-import datetime
 from decimal import Decimal
 
 import pytest
-import pytz
 from django.db import IntegrityError
 from django.db.models import ProtectedError
+from django.utils import timezone
 
 from backend.models import Category, UnitOfMeasure, Item
 
@@ -158,7 +157,7 @@ class TestItemModel(object):
         assert not Item.objects.filter(id=item.id).exists()
 
     def test_flag_item_deleted(self, item):
-        deleted_at = datetime.datetime.utcnow().replace(tzinfo=pytz.timezone('UTC'))
+        deleted_at = timezone.now()
 
         item.is_deleted = True
         item.deleted_at = deleted_at
