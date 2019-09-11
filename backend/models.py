@@ -31,11 +31,10 @@ class UnitOfMeasure(BaseModel):
 
 
 class Item(BaseWithSoftDeleteModel):
-    name = models.CharField(max_length=50, db_index=True)
+    name = models.CharField(max_length=50, db_index=True, null=False)
     category = models.ForeignKey(Category, on_delete=models.PROTECT, null=True, related_name='products')
-    unit_of_measurement = models.ForeignKey(UnitOfMeasure, on_delete=models.PROTECT, null=True,
-                                            related_name='products')
-    upc = models.CharField(max_length=255, null=True)
+    unit_of_measure = models.ForeignKey(UnitOfMeasure, on_delete=models.PROTECT, null=True, related_name='products')
+    upc = models.CharField(max_length=20, null=True)
     unit_price = models.DecimalField(max_digits=18, decimal_places=4, default=0, null=False)
     is_service = models.BooleanField(default=False, null=False)
 
