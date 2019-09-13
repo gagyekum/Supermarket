@@ -44,6 +44,3 @@ class ProductViewSet(ItemViewSet):
     queryset = Item.objects.filter(is_service=False)
     serializer_class = serializers.ProductSerializer
     filterset_fields = ['is_deleted', 'category__name', 'unit_of_measure__name']
-
-
-
