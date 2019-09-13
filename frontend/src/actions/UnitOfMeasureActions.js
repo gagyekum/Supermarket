@@ -3,52 +3,54 @@ import { StoreActions } from '../constants';
 import axios from 'axios';
 
 
-class CategoryActions {
-    handleCreate = async (name) => {
-        const resp = await axios.post('/api/categories', {name: name});
+class UnitofMeasureActions {
+    handleCreate = async (name, symbol = null) => {
+        const resp = await axios.post('/api/units', {name, symbol});
 
         if (resp.status === 201) {
             AppDispatcher.dispatch({
-                type: StoreActions.CREATE_CATEGORY,
+                type: StoreActions.CREATE_UNIT,
                 entity: {
                     id: resp.data.id,
-                    name: resp.data.name
+                    name: resp.data.name,
+                    symbol: resp.data.symbol,
                 }
             });
         }
     }
 
-    handleUpdate = async (id, name) => {
-        const resp = await axios.put(`/api/categories/${id}`, {name: name});
+    handleUpdate = async (id, name, symbol = null) => {
+        const resp = await axios.put(`/api/units/${id}`, {name, symbol});
 
         if (resp.status === 200) {
             AppDispatcher.dispatch({
-                type: StoreActions.UPDATE_CATEGORY,
+                type: StoreActions.UPDATE_UNIT,
                 id,
                 entity: {
-                    name: name
+                    name,
+                    symbol
                 }
             });
         }
     }
 
     handleDelete = async (id) => {
-        const resp = await axios.delete(`/api/categories/${id}`);
+        const resp = await axios.delete(`/api/units/${id}`);
 
         if (resp.status === 204) {
             AppDispatcher.dispatch({
-                type: StoreActions.DELETE_CATEGORY,
+                type: StoreActions.DELETE_UNIT,
                 id
             });
         }
     }
 
     handleFetch = async (term = '', orderBy = 'name') => {
-        const resp = await axios.get(`/api/categories?ordering=${orderBy}&search=${term}`);
+        const resp = await axios.get(`/api/units?ordering=${orderBy}&search=${term}`);
 
         if (resp.status === 200) {
             AppDispatcher.dispatch({
-                type: StoreActions.FETCH_CATEGORIES,
+                type: StoreActions.FETCH_UNITS,
                 storeData: {
                     count: resp.data.count,
                     showing: resp.data.results.length,
@@ -61,5 +63,5 @@ class CategoryActions {
     }
 }
 
-const categoryActions = new CategoryActions();
-export default categoryActions;
+const unitOfMeasureActions = new UnitofMeasureActions();
+export default unitOfMeasureActions;
