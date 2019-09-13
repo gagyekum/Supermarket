@@ -38,33 +38,6 @@ class BaseStore extends EventEmitter {
         this.storeData = {...storeData};
         this.broadCast();
     }
-
-    handleEvents(action) {
-        switch(action.type) {
-            case StoreActions.CREATE_CATEGORY:
-                this.create(action.entity);
-            break;
-            case StoreActions.UPDATE_CATEGORY:
-                this.update(action.id, action.entity);
-            break;
-            case StoreActions.DELETE_CATEGORY:
-                this.delete(action.id);
-            break;
-            case StoreActions.FETCH_CATEGORIES:
-                this.fetch(action.storeData);
-            break;
-            default:
-                this.handleSubEvents(action);
-        }
-    }
-
-    /**
-     * Override this method to handle 
-     * other actions outside of default 
-     * actions specified in base store
-     */
-    handleSubEvents(action) {
-    }
 }
 
 export default BaseStore;
