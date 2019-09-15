@@ -1,8 +1,7 @@
 import EventEmitter from 'events';
-import {StoreActions} from '../constants';
 
 
-class BaseStore extends EventEmitter {
+class StoreBase extends EventEmitter {
     constructor() {
         super();
         this.storeData = {
@@ -40,4 +39,4 @@ class BaseStore extends EventEmitter {
     }
 }
 
-export default BaseStore;
+export default StoreBase;

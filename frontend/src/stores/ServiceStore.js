@@ -1,27 +1,27 @@
 import AppDispatcher from '../dispatcher';
 import StoreBase from './StoreBase';
 
-class UnitOfMeasureStore extends StoreBase {
+class ServiceStore extends StoreBase {
     handleEvents(action) {
         switch(action.type) {
-            case StoreActions.CREATE_UNIT:
+            case StoreActions.CREATE_SERVICE:
                 this.create(action.entity);
             break;
-            case StoreActions.UPDATE_UNIT:
+            case StoreActions.UPDATE_SERVICE:
                 this.update(action.id, action.entity);
             break;
-            case StoreActions.DELETE_UNIT:
+            case StoreActions.DELETE_SERVICE:
                 this.delete(action.id);
             break;
-            case StoreActions.FETCH_UNIT:
+            case StoreActions.FETCH_SERVICES:
                 this.fetch(action.storeData);
             break;
         }
     }
 }
 
-const unitOfMeasureStore = new UnitOfMeasureStore();
-AppDispatcher.register(unitOfMeasureStore.handleEvents.bind(unitOfMeasureStore));
+const serviceStore = new ServiceStore();
+AppDispatcher.register(serviceStore.handleEvents.bind(serviceStore));
 
-export default unitOfMeasureStore;
+export default serviceStore;
 

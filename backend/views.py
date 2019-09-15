@@ -38,6 +38,7 @@ class ItemViewSet(viewsets.ModelViewSet):
 class ServiceViewSet(ItemViewSet):
     queryset = Item.objects.filter(is_service=True)
     serializer_class = serializers.ServiceSerializer
+    filterset_fields = ['is_deleted', 'category__name']
 
 
 class ProductViewSet(ItemViewSet):

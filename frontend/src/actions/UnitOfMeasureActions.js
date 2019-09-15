@@ -1,43 +1,44 @@
 import AppDispatcher from '../dispatcher';
 import { StoreActions } from '../constants';
-import axios from 'axios';
+import UnitOfMeasureApi from './apis/UnitOfMeasureApi';
 
 
 class UnitofMeasureActions {
-    handleCreate = async (name, symbol = null) => {
-        const resp = await axios.post('/api/units', {name, symbol});
+    constructor() {
+        this.api = new UnitOfMeasureApi('/api/categories');
+    }
 
-        if (resp.status === 201) {
+    handleCreate = async (name, symbol = null) => {
+        const data = await this.api.create({name, symbol});
+        if (data) {
             AppDispatcher.dispatch({
                 type: StoreActions.CREATE_UNIT,
                 entity: {
-                    id: resp.data.id,
-                    name: resp.data.name,
-                    symbol: resp.data.symbol,
+                    id: data.id,
+                    name: data.name,
+                    symbol: data.symbol,
                 }
             });
         }
     }
 
     handleUpdate = async (id, name, symbol = null) => {
-        const resp = await axios.put(`/api/units/${id}`, {name, symbol});
-
-        if (resp.status === 200) {
+        const data = await this.api.update(id, {name, symbol});
+        if (data) {
             AppDispatcher.dispatch({
                 type: StoreActions.UPDATE_UNIT,
                 id,
                 entity: {
-                    name,
-                    symbol
+                    name: data.name,
+                    symbol: data.symbol
                 }
             });
         }
     }
 
     handleDelete = async (id) => {
-        const resp = await axios.delete(`/api/units/${id}`);
-
-        if (resp.status === 204) {
+        const resp = await this.api.delete(id);
+        if (resp) {
             AppDispatcher.dispatch({
                 type: StoreActions.DELETE_UNIT,
                 id
@@ -45,18 +46,18 @@ class UnitofMeasureActions {
         }
     }
 
-    handleFetch = async (term = '', orderBy = 'name') => {
-        const resp = await axios.get(`/api/units?ordering=${orderBy}&search=${term}`);
+    handleFetch = async ({page = 1, orderBy = 'name', search = null} = {}) => {
+        const data = await this.api.fetch({page, orderBy, search});
 
         if (resp.status === 200) {
             AppDispatcher.dispatch({
                 type: StoreActions.FETCH_UNITS,
                 storeData: {
-                    count: resp.data.count,
-                    showing: resp.data.results.length,
-                    previous: resp.data.previous,
-                    next: resp.data.next,
-                    data: resp.data.results,
+                    count: data.count,
+                    showing: data.results.length,
+                    previous: data.previous,
+                    next: data.next,
+                    data: data.results,
                 }
             });
         }

@@ -1,41 +1,42 @@
 import AppDispatcher from '../dispatcher';
 import { StoreActions } from '../constants';
-import axios from 'axios';
+import CategoryApi from './apis/CategoryApi';
 
 
 class CategoryActions {
-    handleCreate = async (name) => {
-        const resp = await axios.post('/api/categories', {name: name});
+    constructor() {
+        this.api = new CategoryApi('/api/categories');
+    }
 
-        if (resp.status === 201) {
+    handleCreate = async (name) => {
+        const data = await this.api.create({name});
+        if (data) {
             AppDispatcher.dispatch({
                 type: StoreActions.CREATE_CATEGORY,
                 entity: {
-                    id: resp.data.id,
-                    name: resp.data.name
+                    id: data.id,
+                    name: data.name
                 }
             });
         }
     }
 
     handleUpdate = async (id, name) => {
-        const resp = await axios.put(`/api/categories/${id}`, {name: name});
-
-        if (resp.status === 200) {
+        const data = await this.api.update(id, {name});
+        if (data) {
             AppDispatcher.dispatch({
                 type: StoreActions.UPDATE_CATEGORY,
                 id,
                 entity: {
-                    name: name
+                    name: data.name
                 }
             });
         }
     }
 
     handleDelete = async (id) => {
-        const resp = await axios.delete(`/api/categories/${id}`);
-
-        if (resp.status === 204) {
+        const resp = await this.api.delete(id);
+        if (resp) {
             AppDispatcher.dispatch({
                 type: StoreActions.DELETE_CATEGORY,
                 id
@@ -43,18 +44,17 @@ class CategoryActions {
         }
     }
 
-    handleFetch = async (term = '', orderBy = 'name') => {
-        const resp = await axios.get(`/api/categories?ordering=${orderBy}&search=${term}`);
-
-        if (resp.status === 200) {
+    handleFetch = async ({page = 1, orderBy = 'name', search = null} = {}) => {
+        const data = await this.api.fetch({page, orderBy, search});
+        if (data) {
             AppDispatcher.dispatch({
                 type: StoreActions.FETCH_CATEGORIES,
                 storeData: {
-                    count: resp.data.count,
-                    showing: resp.data.results.length,
-                    previous: resp.data.previous,
-                    next: resp.data.next,
-                    data: resp.data.results,
+                    count: data.count,
+                    showing: data.results.length,
+                    previous: data.previous,
+                    next: data.next,
+                    data: data.results,
                 }
             });
         }

@@ -1,7 +1,7 @@
 import AppDispatcher from '../dispatcher';
-import BaseStore from './BaseStore';
+import StoreBase from './StoreBase';
 
-class CategoryStore extends BaseStore {
+class CategoryStore extends StoreBase {
     handleEvents(action) {
         switch(action.type) {
             case StoreActions.CREATE_CATEGORY:

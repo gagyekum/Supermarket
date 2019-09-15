@@ -1,11 +1,11 @@
 import pytest
-import functools
 from django.conf import settings
+from django.utils import timezone
 from django.db.models import Q
 from django.urls import reverse
 from rest_framework import status
 
-from backend.models import Category, UnitOfMeasure, Item
+from backend.models import Category, Item, UnitOfMeasure
 
 throttle_classes = settings.REST_FRAMEWORK['DEFAULT_THROTTLE_CLASSES']
 throttle_rates = settings.REST_FRAMEWORK['DEFAULT_THROTTLE_RATES']
@@ -229,6 +229,47 @@ class TestProductView(object):
         assert response.status_code == status.HTTP_200_OK
         assert Item.objects.filter(name__icontains=search).count() == response.data.get('count')
 
+    @pytest.mark.parametrize('is_deleted', [True, False])
+    def test_filtering_deleted_products(self, client, item_factory, is_deleted):
+        for index in range(50):
+            deleted = index % 2 == 0
+            item_factory.create(is_deleted=deleted,
+                                deleted_at=timezone.now() if deleted else None,
+                                is_service=False)
+
+        response = client.get(reverse('product-list'), {'ordering': 'name', 'is_deleted': is_deleted})
+
+        assert response.status_code == status.HTTP_200_OK
+        assert Item.objects.filter(is_deleted=is_deleted, is_service=False).count() == response.data.get('count')
+
+    @pytest.mark.parametrize('category_name', ['cat_0', 'cat_1'])
+    def test_filtering_products_by_category(self, client, category_factory, item_factory, category_name):
+        cat0 = category_factory.create(name='cat_0')
+        cat1 = category_factory.create(name='cat_1')
+
+        for index in range(50):
+            category = cat0 if index % 2 == 0 else cat1
+            item_factory.create(is_service=False, category=category)
+
+        response = client.get(reverse('product-list'), {'ordering': 'name', 'category__name': category_name})
+
+        assert response.status_code == status.HTTP_200_OK
+        assert Item.objects.filter(category__name=category_name).count() == response.data.get('count')
+
+    @pytest.mark.parametrize('unit_name', ['unit_0', 'unit_1'])
+    def test_filtering_products_by_unit(self, client, unit_of_measure_factory, item_factory, unit_name):
+        unit0 = unit_of_measure_factory.create(name='unit_0')
+        unit1 = unit_of_measure_factory.create(name='unit_1')
+
+        for index in range(50):
+            unit = unit0 if index % 2 == 0 else unit1
+            item_factory.create(is_service=False, unit_of_measure=unit)
+
+        response = client.get(reverse('product-list'), {'ordering': 'name', 'unit_of_measure__name': unit_name})
+
+        assert response.status_code == status.HTTP_200_OK
+        assert Item.objects.filter(unit_of_measure__name=unit_name, is_service=False).count() == response.data.get('count')
+
 
 @pytest.mark.django_db
 class TestServiceView(object):
@@ -310,5 +351,29 @@ class TestServiceView(object):
         assert response.status_code == status.HTTP_200_OK
         assert Item.objects.filter(name__icontains=search).count() == response.data.get('count')
 
+    @pytest.mark.parametrize('is_deleted', [True, False])
+    def test_filtering_deleted_services(self, client, item_factory, is_deleted):
+        for index in range(50):
+            deleted = index % 2 == 0
+            item_factory.create(is_deleted=deleted,
+                                deleted_at=timezone.now() if deleted else None,
+                                is_service=True)
 
+        response = client.get(reverse('service-list'), {'ordering': 'name', 'is_deleted': is_deleted})
 
+        assert response.status_code == status.HTTP_200_OK
+        assert Item.objects.filter(is_deleted=is_deleted, is_service=True).count() == response.data.get('count')
+
+    @pytest.mark.parametrize('category_name', ['cat_0', 'cat_1'])
+    def test_filtering_services_by_category(self, client, category_factory, item_factory, category_name):
+        cat0 = category_factory.create(name='cat_0')
+        cat1 = category_factory.create(name='cat_1')
+
+        for index in range(50):
+            category = cat0 if index % 2 == 0 else cat1
+            item_factory.create(is_service=True, category=category)
+
+        response = client.get(reverse('service-list'), {'ordering': 'name', 'category__name': category_name})
+
+        assert response.status_code == status.HTTP_200_OK
+        assert Item.objects.filter(category__name=category_name, is_service=True).count() == response.data.get('count')
