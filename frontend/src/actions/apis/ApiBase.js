@@ -9,7 +9,7 @@ class ApiBase {
         throw Error(`A ${status} error occurred while processing request.`);
     }
 
-    fetch = async ({page=1, orderBy=null, search=null, filter=null} = {}) => {
+    fetch = async ({page=1, orderBy='', search='', filter=''} = {}) => {
         try {
             const url = `${this.baseUrl}?page=${page}&ordering=${orderBy}&search=${search}${filter}`;
             const resp = await axios.get(url);
