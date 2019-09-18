@@ -1,10 +1,12 @@
 import React from 'react';
 import './styles/App.css';
-import CategoryActions from '../actions/CategoryActions';
+import SearchComponent from './SearchComponent';
+import PaginationComponent from './PaginationComponent';
 
 function App() {
   return (
     <div className="App">
+      <PaginationComponent totalRecords={215} maxPages={10} position="default" />
     </div>
   );
 }
