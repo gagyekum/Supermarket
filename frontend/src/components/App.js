@@ -2,11 +2,12 @@ import React from 'react';
 import './styles/App.css';
 import SearchComponent from './SearchComponent';
 import PaginationComponent from './PaginationComponent';
+import TableComponent from './TableComponent';
 
 function App() {
   return (
     <div className="App">
-      <PaginationComponent totalRecords={215} maxPages={10} position="default" />
+      <TableComponent />
     </div>
   );
 }
