@@ -13,9 +13,11 @@ class SearchComponent extends Component {
     onSearch: PropTypes.func.isRequired
   };
 
-  handleSubmit = (event) => {
-    event.preventDefault();
-    
+  handleSubmit = e => {
+    e.preventDefault();
+
+    if (this.state.search.trim() === "") return;
+
     const { onSearch } = this.props;
     const { search } = this.state;
 
@@ -52,8 +54,8 @@ SearchComponent.defaultProps = {
   placeholder: "Search",
   showSearchButton: true,
   searchButtonText: "Search",
-  onSearch: () => {
-    console.log("Searching...");
+  onSearch: search => {
+    console.log(`Searching for ${search}...`);
   }
 };
 

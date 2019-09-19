@@ -7,7 +7,7 @@ import TableComponent from './TableComponent';
 function App() {
   return (
     <div className="App">
-      <TableComponent />
+      <PaginationComponent totalRecords={1500} pageSize={20} />
     </div>
   );
 }

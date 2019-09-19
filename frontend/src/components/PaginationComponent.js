@@ -15,15 +15,27 @@ class PaginationComponent extends Component {
     totalRecords: PropTypes.number.isRequired,
     pageSize: PropTypes.number.isRequired,
     maxPages: PropTypes.number.isRequired,
-    position: PropTypes.oneOf(["default", "center", "right"])
+    position: PropTypes.oneOf(["default", "center", "right"]),
+    onPaginatorUpdate: PropTypes.func.isRequired
   };
 
   static getDerivedStateFromProps(props, state) {
-    const { maxPages, totalRecords, pageSize } = props;
+    const { maxPages, totalRecords, pageSize, onPaginatorUpdate } = props;
     let { currentPage, startPage, endPage, previous } = state;
     const totalPages = Math.ceil(totalRecords / pageSize);
 
     if (endPage === 1) {
+      let displayingRecords = currentPage * pageSize;
+      displayingRecords =
+        displayingRecords > totalRecords ? totalRecords : displayingRecords;
+
+      onPaginatorUpdate({
+        currentPage,
+        totalPages,
+        totalRecords,
+        displayingRecords
+      });
+
       return {
         currentPage,
         startPage,
@@ -65,8 +77,8 @@ class PaginationComponent extends Component {
   updatePaginator(page) {
     page = parseInt(page);
 
-    const { totalPages } = this.state;
-    const { maxPages } = this.props;
+    const { totalPages, currentPage } = this.state;
+    const { maxPages, totalRecords, pageSize, onPaginatorUpdate } = this.props;
     const currentPageGroup = Math.ceil(page / maxPages);
 
     let lastPage = currentPageGroup * maxPages;
@@ -81,6 +93,17 @@ class PaginationComponent extends Component {
       previous: page > 1,
       startPage: firstPage,
       endPage: lastPage
+    });
+
+    let displayingRecords = currentPage * pageSize;
+    displayingRecords =
+      displayingRecords > totalRecords ? totalRecords : displayingRecords;
+
+    onPaginatorUpdate({
+      currentPage,
+      totalPages,
+      totalRecords,
+      displayingRecords
     });
   }
 
@@ -151,7 +174,17 @@ PaginationComponent.defaultProps = {
   totalRecords: 100,
   pageSize: 10,
   maxPages: 10,
-  position: "default"
+  position: "default",
+  onPaginatorUpdate: ({
+    currentPage,
+    totalPages,
+    totalRecords,
+    displayingRecords
+  }) => {
+    console.log(
+      `Displaying ${displayingRecords} of ${totalRecords} on page ${currentPage} of ${totalPages}`
+    );
+  }
 };
 
 export default PaginationComponent;
